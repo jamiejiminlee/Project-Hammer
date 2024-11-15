@@ -1,13 +1,11 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Loblaws Seasonal Discount Patterns: Peak Sales Frequency in Fall and Deeper Discounts in Early Spring"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
+  - Jamie Lee
+thanks: "Code and data are available at: [https://github.com/jamiejiminlee/Project-Hammer.git)."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "This paper analyzes seasonal discount patterns at Loblaws, highlighting trends in sales frequency and discount depth across the year. By examining monthly and seasonal variations in discount percentages, we identify that the frequency of items on sale peaks in the fall, while the deepest discounts occur in early spring. This analysis suggests that Loblaws employs strategic discounting aligned with seasonal shopping behaviors to maximize consumer engagement and manage inventory effectively. Our findings offer insights into retail pricing strategies, providing valuable information for both retailers seeking to optimize sales and consumers aiming to make informed purchasing decisions."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -19,237 +17,232 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+library(knitr)
+
+price_analysis_data <- read_csv("/Users/jamielee/Downloads/price_analysis.csv")
 ```
 
 
 # Introduction
 
-Overview paragraph
+In this paper, we analyze seasonal and monthly discount patterns at Loblaws to identify trends in sales frequency and discount depth. By examining how often and how deeply products are discounted, we aim to uncover strategic pricing practices tied to seasonal demand and inventory management.
 
-Estimand paragraph
+The estimand in this study is the average discount percentage and the frequency of sale events across different months and seasons, representing the extent to which Loblaws uses sales to influence consumer behavior throughout the year.
 
-Results paragraph
+Our results indicate that sales frequency peaks in the fall, with deeper discounts concentrated in early spring and moderate discounts persisting in the latter half of the year. These findings suggest that Loblaws strategically times its discounting to align with seasonal shopping patterns, maximizing consumer engagement and managing inventory levels.
 
-Why it matters paragraph
+Understanding retail discount patterns helps reveal how businesses optimize sales strategies to align with consumer demand cycles. Insights from this analysis could inform marketing, pricing, and inventory management strategies, providing value to both retailers and consumers by promoting a balance between affordability and profitability.
 
-Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
-
-
-
-
+The remainder of this paper is structured as follows. @sec-data describes the data and methodology used for analysis. @sec-analysis-results presents the data analysis results and finally, @sec-discussion discusses limitations related to correlation, missing data, and potential sources of bias. 
 
 # Data {#sec-data}
 
 ## Overview
-
-We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
-
-Overview text
+The data was obtained as a SQLite file from Project Hammer [@projecthammer] and cleaned using programming language SQL [@sql] in DB browser [@dbbrowser]. We also used the programming language R [@citeR] to analyze and visualize the data, which contains information on product prices and other related attributes across various time points in from February 28th, 2024. For the analysis, we consider the seasonal trends and variations in pricing and sales frequency to identify which items went on sale the most across different seasons.
 
 ## Measurement
-	
-Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
+
+The data from Project Hammer [@projecthammer] reflects real-world fluctuations in the pricing of various products, capturing changes in both "old" and "current" prices over time. This process of turning real-world phenomena into structured data involves several steps.
+
+First, Project Hammer continuously tracks and records product prices as they appear on the websites of major retailers like Loblaws. When prices are updated on these platforms, the system logs both the prior price (**'old_price'**) and the latest price (**'current_price'**), creating a historical record of price changes. Each entry is timestamped to allow for temporal analysis, effectively transforming the dynamic, everyday activity of retail pricing into structured data points that represent market behavior over time.
+
+Each entry in the data includes key attributes such as product_id, product_name, vendor, nowtime (the timestamp of the price check), and the prices themselves. This transformation process, from initial price observation to dataset entry, involves aggregating data from retailer websites, ensuring each record accurately reflects the status at the time of data collection. Thus, Project Hammer encapsulates the fluctuations and trends in product prices as a dataset, offering insights into seasonal pricing behavior, promotional impacts, and potential economic influences on retail prices. This structured dataset serves as a foundation for further analysis, translating the observed behavior of prices in the marketplace into quantifiable data for research.
 
 ## Outcome variables
 
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
-
-
-
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+In this analysis, the outcome variable **'on_sale'** is a constructed binary variable created to identify when a product’s **'current_price'** is lower than its **'old_price'**, indicating a sale. This categorization (TRUE/FALSE) allows us to quantify and visualize sale patterns over time, which are not directly observable in the raw data.
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
 #| echo: false
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
+#| label: tbl-outcome-var
+#| tbl-cap: "Sample of Old Price, Current Price, and On Sale Calculation"
 #| warning: false
 #| message: false
 
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
 
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
+# Add columns to identify sales and calculate discount
+price_analysis_data <- price_analysis_data %>%
+  mutate(
+    on_sale = ifelse(current_price < as.numeric(old_price), TRUE, FALSE), # Identify if item is on sale
+    price_drop = as.numeric(old_price) - current_price,                    # Calculate price drop
+    discount_percentage = (price_drop / as.numeric(old_price)) * 100       # Calculate discount percentage
+  )
+
+# Select a random sample of rows showing old price, current price, and on_sale
+sample_on_sale_table <- price_analysis_data %>%
+  select(old_price, current_price, on_sale) %>%
+  slice_sample(n = 3) # Choose 3 random rows
+
+# Display the table
+kable(sample_on_sale_table)
+
 ```
+@tbl-outcome-var illustrates how the on_sale variable is determined by comparing the old_price to the current_price. Each row represents a product where the current_price is lower than the old_price, resulting in an on_sale status of TRUE. For example, an item with an old price of **$8.99** is currently priced at **$8.54**, marking it as on sale. This binary on_sale indicator simplifies the identification of discounted items and enables an analysis of sales patterns across the dataset by tracking when items are offered below their original price.
 
-Talk way more about it. 
 
 ## Predictor variables
+The predictive variables in this paper are:
 
-Add graphs, tables and text.
-
-Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
-
-
-
-
-
-
-
-
-# Model
-
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
-
-## Model set-up
-
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
-
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
-
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
-
-
-### Model justification
-
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
-
-# Results
-
-Our results are summarized in @tbl-modelresults.
+- **'month'**: Extracted from the **'nowtime'**, this variable allows for analyzing trends in sales activity on a monthly basis. It can help reveal seasonal patterns or monthly cycles in the frequency of items on sale.
+- **'season'**: Derived from **'month'**, this variable categorizes months into seasons (e.g., winter, spring, summer, fall). Analyzing sales at a seasonal level helps identify broader trends, such as increased discounts during holiday seasons or end-of-summer clearance sales.
+- **'old_price'**: This variable, in relation to **'current_price'**, allows you to calculate the discount percentage or price drop, which can be examined across months and seasons to see if certain times of the year have steeper discounts.
+-**'product_name'**: This variable could help analyze if specific products or categories are more likely to go on sale in certain months or seasons, providing insights into product-specific discounting trends.
 
 ```{r}
 #| echo: false
-#| eval: true
+#| label: tbl-pred-var
+#| fig-cap: "Monthly and Seasonal Price Changes for Selected Loblaws Products. This table displays the old and current prices for various products sold at Loblaws, categorized by month and season."
 #| warning: false
 #| message: false
 
-library(rstanarm)
+# Add month and season columns
+price_analysis_data <- price_analysis_data %>%
+  mutate(
+    month = month(nowtime, label = TRUE, abbr = TRUE), # Extract month as a labeled factor (e.g., "Jan", "Feb")
+    season = case_when(                               # Define season based on month
+      month %in% c("Dec", "Jan", "Feb") ~ "Winter",
+      month %in% c("Mar", "Apr", "May") ~ "Spring",
+      month %in% c("Jun", "Jul", "Aug") ~ "Summer",
+      month %in% c("Sep", "Oct", "Nov") ~ "Fall"
+    )
+  )
 
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
+# Select a random sample of five rows and relevant columns from price_analysis_data
+predictive_var_table <- price_analysis_data %>%
+  select(month, season, old_price, current_price, product_name) %>%
+  slice_sample(n = 5) # Select a random sample of five rows
+
+# Display the table
+kable(predictive_var_table)
+
 ```
+
+@tbl-pred-var provides an overview of price fluctuations for selected Loblaws products across different months and seasons. Each row represents a product with details on its old and current prices, allowing for an analysis of price drops during specific times of the year. For instance, items like "Rolled Oats" and "Ashwagandha 60 count" experienced price reductions from August to September, marking potential seasonal sales or promotions. This data can help identify patterns in Loblaws' pricing strategy, suggesting that certain products may be discounted in summer or fall, which could inform future purchasing decisions for budget-conscious shoppers.
+
+
+
+# Data Analysis and Results {#sec-analysis-results}
+
+This section presents findings on monthly and seasonal discount patterns at Loblaws, using four key visualizations to illustrate trends in sales frequency and discount percentages.
+
+## Monthly Frequency of Items on Sale
+
+@fig-monthly-sales reveals significant trends in the volume of sales across different months. The chart demonstrates a steep increase in the number of items on sale starting in June, reaching a peak in October, followed by a sharp drop in November. This pattern suggests that Loblaws ramps up sales activity in the late summer and early fall, likely aiming to clear inventory before the holiday season. The high frequency of items on sale in October could be associated with seasonal transitions or targeted discounting to attract customers before the end-of-year shopping period. The dramatic decline in November may indicate a pause before holiday promotions, aligning with common retail strategies to manage demand.
 
 ```{r}
 #| echo: false
 #| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
+#| label: fig-monthly-sales
+#| fig-cap: "Monthly trend in the frequency of items on sale at Loblaws, showing peak sale activity in October and a drop in November."
 #| warning: false
-
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
-```
-
-
-
-
-# Discussion
-
-## First discussion point {#sec-first-point}
-
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
-
-## Second discussion point
-
-Please don't use these as sub-heading labels - change them to be what your point actually is.
-
-## Third discussion point
-
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
-
-\newpage
-
-\appendix
-
-# Appendix {-}
-
-
-# Additional data details
-
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-```{r}
-#| eval: true
-#| echo: false
 #| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
 
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
+monthly_sales <- price_analysis_data %>%
+  filter(on_sale == TRUE) %>%
+  count(month)
 
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
+ggplot(monthly_sales, aes(x = month, y = n)) +
+  geom_line(color = "blue", group = 1) +
+  geom_point(color = "blue") +
+  labs(
+    title = "Monthly Frequency of Items on Sale",
+    x = "Month",
+    y = "Count of Products on Sale"
+  ) +
+  theme_minimal()
+
 ```
 
-## Diagnostics
+## Discount Distribution by Season
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
-
+@fig-seasonal-discount-distrib highlights the spread and density of discount percentages for each season. The violin plot shows that fall has the widest range of discount percentages, with some discounts reaching high values, indicating that the fall season sees a more aggressive discounting strategy. In contrast, winter displays a narrower distribution, suggesting more conservative or consistent discounting during this period. The density of moderate discounts in spring and summer implies steady discount practices, with fewer extreme discounts than seen in fall. Overall, this distribution analysis suggests that Loblaws adjusts its discount depth based on seasonal factors, with potentially deeper or more varied discounts offered in the fall.
 ```{r}
 #| echo: false
 #| eval: true
-#| message: false
+#| label: fig-seasonal-discount-distrib
+#| fig-cap: "Distribution of discount percentages across seasons at Loblaws, indicating higher variability and deeper discounts in fall."
 #| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
 
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
+ggplot(price_analysis_data %>% filter(on_sale == TRUE), aes(x = season, y = discount_percentage)) +
+  geom_violin(fill = "lightblue", color = "black") +
+  labs(
+    x = "Season",
+    y = "Discount Percentage"
+  ) +
+  theme_minimal()
 ```
 
+## Average Discount Percentage by Month
 
+@fig-average-monthly-discount provides insight into how average discount rates vary across months. The chart reveals that the highest average discounts occur in early spring (February and March) and gradually decrease throughout the year, stabilizing at a lower average discount from July onward. This trend may reflect early-year inventory clearing, where Loblaws offers more substantial discounts to move products after the holiday season. The stabilization of discounts in the latter half of the year, despite an increase in sale frequency, suggests that while more items are on sale, the depth of individual discounts is reduced. This balance between volume and discount depth likely reflects an optimized strategy for attracting steady consumer interest without significant margin reductions.
+```{r}
+#| echo: false
+#| eval: true
+#| label: fig-average-monthly-discount
+#| fig-cap: "Average discount percentage per month, showing the highest discounts in early spring, with a gradual decline through the year."
+#| warning: false
+
+# Calculate discount_percentage
+price_analysis_data <- price_analysis_data %>%
+  mutate(
+    discount_percentage = ((as.numeric(old_price) - current_price) / as.numeric(old_price)) * 100,
+    month = month(nowtime, label = TRUE, abbr = TRUE) # Extract month as abbreviated label
+  )
+
+# Calculate average discount by month
+avg_discount_by_month <- price_analysis_data %>%
+  filter(on_sale == TRUE) %>% # Only include items on sale
+  group_by(month) %>%
+  summarize(avg_discount = mean(discount_percentage, na.rm = TRUE))
+
+# Ensure month is ordered chronologically (Jan, Feb, etc.)
+avg_discount_by_month$month <- factor(avg_discount_by_month$month, levels = month.abb)
+
+# Plot the data
+ggplot(avg_discount_by_month, aes(x = month, y = avg_discount)) +
+     geom_point(color = "blue", size = 3) +
+     labs(
+         x = "Month",
+         y = "Average Discount Percentage"
+     ) +
+     theme_minimal()
+```
+
+## Density of Discount Percentages by Season
+
+@fig-discount-density-season illustrates that winter tends to have smaller, consistent discounts, while fall shows a broader spread, including more substantial discounts. Spring and summer exhibit moderate discount distributions. This seasonal comparison underscores the strategic use of varied discount levels by Loblaws, with deeper discounts appearing more frequently in fall and winter, possibly to drive purchases during key shopping periods.
+```{r}
+#| echo: false
+#| eval: true
+#| label: fig-discount-density-season
+#| fig-cap: "Density plot of discount percentages by season, highlighting fall as the season with a broader range of discounts, including higher values."
+#| warning: false
+
+ggplot(price_analysis_data %>% filter(on_sale == TRUE), aes(x = discount_percentage, fill = season)) +
+  geom_density(alpha = 0.5) +
+  labs(
+    x = "Discount Percentage",
+    y = "Density"
+  ) +
+  theme_minimal()
+```
+Collectively, the visualizations provide insights into Loblaws' seasonal and monthly discount strategies. The data suggests that Loblaws increases the frequency of sales in the latter half of the year while moderating the average discount depth, likely balancing consumer demand with profit margins. The fall season appears to be a critical period for aggressive discounting, likely tied to seasonal shopping behaviors. By analyzing both the frequency and depth of discounts, this study highlights the complexity of retail discount strategies and provides a basis for further investigation into how these strategies impact consumer behavior and sales outcomes.
+
+# Discussion {#sec-discussion}
+
+## Correlation vs. Causation
+
+While this analysis highlights a relationship between seasonal periods and discount patterns, it does not establish causation. For instance, higher sales frequencies and deeper discounts in the fall may correlate with seasonal shopping habits, but this does not mean that the season itself causes these pricing strategies. Other factors, such as inventory management, competition, or holiday preparations, could drive these trends. To establish causation, experimental research would be required, as observational data like this can only reveal associations, not definitive causes.
+
+## Missing Data
+
+The reliability of our findings is impacted by inconsistencies and missing values in the dataset, particularly in columns like **'old_price'**, **'current_price'**, **'product_id'**, and **'product_name'**. The **'old_price'** column, for instance, often contained non-standard entries, such as text labels ("was") in the other column rather than a numeric price. This inconsistency required additional data cleaning to accurately calculate discount percentages, which may have influenced the observed patterns. Additionally, critical rows with missing values in these columns were filtered out, potentially limiting the dataset and excluding some items from the analysis.
+
+Originally, we aimed to conduct a broader comparison across multiple stores, but Git repository size limitations restricted the dataset’s scope, leading us to focus solely on Loblaws. These constraints highlight the challenges of handling large data in version-controlled environments and the compromises made in analysis scope. These data issues, combined with missing values in essential columns, mean that some sale patterns might be underrepresented or skewed, affecting the robustness of our findings. Addressing these limitations through more consistent data collection practices or alternative storage solutions could improve the reliability of future analyses.
+
+## Sources of Bias
+
+Several types of bias may influence our results. Selection bias could arise if certain product categories are more likely to be discounted in specific seasons, skewing the analysis and limiting generalizability across all product types. Additionally, Loblaws’ unique pricing practices may not reflect broader retail trends, limiting the application of these findings to other retailers. External factors like holidays, weather, or economic shifts might also drive seasonal demand, indirectly affecting discount patterns. These biases highlight the need to interpret results within the context of Loblaws’ specific practices and seasonal dynamics.
 
 \newpage
 
