@@ -8,6 +8,7 @@
 # Any other information needed? N/A
 
 # Below is the SQL script I used on DB Browser to clean and manipulate the raw data obtained from Project Hammer.
+# The cleaned data is called and saved as price_analysis_data in 02-download_data.R script.
 
 #SELECT 
   #STRFTIME('%Y-%m-%d %H:%M:%S', nowtime) AS nowtime, 
