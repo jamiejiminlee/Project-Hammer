@@ -1,11 +1,11 @@
 #### Preamble ####
-# Purpose: Tests... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 26 September 2024 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Tests the quality of the cleaned data for price analysis, including column presence, data types, missing values, and non-negative prices.
+# Author: Jamie Lee
+# Date: 14 November 2024
+# Contact: jamiejimin.lee@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: SQLite raw data file obtained from Project Hammer and cleaned in DB Browser
+# Any other information needed? N/A
 
 #### Workspace setup ####
 library(tidyverse)
@@ -39,8 +39,6 @@ test_that("No missing values in essential columns", {
     select(nowtime, product_id, current_price, old_price, product_name, vendor)
   expect_true(all(!is.na(essential_columns)))
 })
-
-
 
 # Test for non-negative prices
 test_that("Prices are non-negative", {

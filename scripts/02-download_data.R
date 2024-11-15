@@ -1,11 +1,11 @@
 #### Preamble ####
-# Purpose: Downloads and saves the data from [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Calls and saves the cleaned data (data pre-cleaned with SQL in DB Browser)
+# Author: Jimin Lee
+# Date: 14 November 2024
+# Contact: jamiejimin.lee@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: SQLite raw data file obtained from Project Hammer and cleaned in DB Browser
+# Any other information needed? N/A
 
 
 #### Workspace setup ####

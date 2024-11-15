@@ -1,11 +1,11 @@
 #### Preamble ####
-# Purpose: Cleans the raw plane data recorded by two observers..... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 6 April 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Calls and saves the cleaned data (data pre-cleaned with SQL in DB Browser)
+# Author: Jamie Lee
+# Date: 14 November 2024
+# Contact: jamiejimin.lee@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: Raw data obtained from Project Hammer in SQLite file and cleaned with SQL in DB Browser
+# Any other information needed? N/A
 
 #### Workspace setup ####
 library(tidyverse)
