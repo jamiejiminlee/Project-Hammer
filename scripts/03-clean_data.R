@@ -7,12 +7,20 @@
 # Pre-requisites: Raw data obtained from Project Hammer in SQLite file and cleaned with SQL in DB Browser
 # Any other information needed? N/A
 
-#### Workspace setup ####
-library(tidyverse)
-
-#### Download data ####
-price_analysis_data <- read_csv("/Users/jamielee/Downloads/price_analysis.csv")
-
-#### Save data ####
-write_csv(price_analysis_data, "data/02-analysis_data/analysis_data.csv")
-
+SELECT 
+  STRFTIME('%Y-%m-%d %H:%M:%S', nowtime) AS nowtime, 
+  product_id,
+  current_price,
+  old_price,
+  other,
+  product_name,
+  vendor
+FROM 
+  raw
+JOIN 
+  product ON product_id = id
+WHERE vendor = 'Loblaws'
+  AND product_id IS NOT NULL
+  AND current_price IS NOT NULL
+  AND old_price IS NOT NULL
+  AND product_name IS NOT NULL;
