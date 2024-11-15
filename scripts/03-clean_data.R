@@ -14,7 +14,5 @@ library(tidyverse)
 price_analysis_data <- read_csv("/Users/jamielee/Downloads/price_analysis.csv")
 
 #### Save data ####
-# [...UPDATE THIS...]
-
 write_csv(price_analysis_data, "data/02-analysis_data/analysis_data.csv")
 
