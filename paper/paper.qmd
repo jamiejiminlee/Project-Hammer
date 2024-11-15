@@ -54,6 +54,7 @@ In this analysis, the outcome variable **'on_sale'** is a constructed binary var
 
 ```{r}
 #| echo: false
+#| eval: true
 #| label: tbl-outcome-var
 #| tbl-cap: "Sample of Old Price, Current Price, and On Sale Calculation"
 #| warning: false
@@ -90,7 +91,8 @@ The predictive variables in this paper are:
 
 ```{r}
 #| echo: false
-#| label: tbl-pred-var
+#| eval: true
+#| label: tbl-predictive-var
 #| fig-cap: "Monthly and Seasonal Price Changes for Selected Loblaws Products. This table displays the old and current prices for various products sold at Loblaws, categorized by month and season."
 #| warning: false
 #| message: false
@@ -116,8 +118,7 @@ predictive_var_table <- price_analysis_data %>%
 kable(predictive_var_table)
 
 ```
-
-@tbl-pred-var provides an overview of price fluctuations for selected Loblaws products across different months and seasons. Each row represents a product with details on its old and current prices, allowing for an analysis of price drops during specific times of the year. For instance, items like "Rolled Oats" and "Ashwagandha 60 count" experienced price reductions from August to September, marking potential seasonal sales or promotions. This data can help identify patterns in Loblaws' pricing strategy, suggesting that certain products may be discounted in summer or fall, which could inform future purchasing decisions for budget-conscious shoppers.
+@tbl-predictive-var provides an overview of price fluctuations for selected Loblaws products across different months and seasons. Each row represents a product with details on its old and current prices, allowing for an analysis of price drops during specific times of the year. For instance, items like "Rolled Oats" and "Ashwagandha 60 count" experienced price reductions from August to September, marking potential seasonal sales or promotions. This data can help identify patterns in Loblaws' pricing strategy, suggesting that certain products may be discounted in summer or fall, which could inform future purchasing decisions for budget-conscious shoppers.
 
 
 # Data Analysis and Results {#sec-analysis-results}
