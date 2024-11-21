@@ -19,7 +19,7 @@ bibliography: references.bib
 library(tidyverse)
 library(knitr)
 
-price_analysis_data <- read_csv("/Users/jamielee/Downloads/price_analysis.csv")
+price_analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
 ```
 
 
@@ -127,7 +127,6 @@ This section presents findings on monthly and seasonal discount patterns at Lobl
 
 ## Monthly Frequency of Items on Sale
 
-@fig-monthly-sales reveals significant trends in the volume of sales across different months. The chart demonstrates a steep increase in the number of items on sale starting in June, reaching a peak in October, followed by a sharp drop in November. This pattern suggests that Loblaws ramps up sales activity in the late summer and early fall, likely aiming to clear inventory before the holiday season. The high frequency of items on sale in October could be associated with seasonal transitions or targeted discounting to attract customers before the end-of-year shopping period. The dramatic decline in November may indicate a pause before holiday promotions, aligning with common retail strategies to manage demand.
 
 ```{r}
 #| echo: false
@@ -152,8 +151,10 @@ ggplot(monthly_sales, aes(x = month, y = n)) +
   theme_minimal()
 
 ```
+@fig-monthly-sales reveals significant trends in the volume of sales across different months. The chart demonstrates a steep increase in the number of items on sale starting in June, reaching a peak in October, followed by a sharp drop in November. This pattern suggests that Loblaws ramps up sales activity in the late summer and early fall, likely aiming to clear inventory before the holiday season. The high frequency of items on sale in October could be associated with seasonal transitions or targeted discounting to attract customers before the end-of-year shopping period. The dramatic decline in November may indicate a pause before holiday promotions, aligning with common retail strategies to manage demand.
 
 ## Discount Distribution by Season
+@fig-seasonal-discount-distrib highlights the spread and density of discount percentages for each season. The violin plot shows that fall has the widest range of discount percentages, with some discounts reaching high values, indicating that the fall season sees a more aggressive discounting strategy. In contrast, winter displays a narrower distribution, suggesting more conservative or consistent discounting during this period. The density of moderate discounts in spring and summer implies steady discount practices, with fewer extreme discounts than seen in fall.
 ```{r}
 #| echo: false
 #| eval: true
@@ -169,11 +170,11 @@ ggplot(price_analysis_data %>% filter(on_sale == TRUE), aes(x = season, y = disc
   ) +
   theme_minimal()
 ```
-@fig-seasonal-discount-distrib highlights the spread and density of discount percentages for each season. The violin plot shows that fall has the widest range of discount percentages, with some discounts reaching high values, indicating that the fall season sees a more aggressive discounting strategy. In contrast, winter displays a narrower distribution, suggesting more conservative or consistent discounting during this period. The density of moderate discounts in spring and summer implies steady discount practices, with fewer extreme discounts than seen in fall. Overall, this distribution analysis suggests that Loblaws adjusts its discount depth based on seasonal factors, with potentially deeper or more varied discounts offered in the fall.
+ Overall, this distribution analysis suggests that Loblaws adjusts its discount depth based on seasonal factors, with potentially deeper or more varied discounts offered in the fall.
 
 
 ## Average Discount Percentage by Month
-
+@fig-average-monthly-discount provides insight into how average discount rates vary across months. The chart reveals that the highest average discounts occur in early spring (February and March) and gradually decrease throughout the year, stabilizing at a lower average discount from July onward. This trend may reflect early-year inventory clearing, where Loblaws offers more substantial discounts to move products after the holiday season. The stabilization of discounts in the latter half of the year, despite an increase in sale frequency, suggests that while more items are on sale, the depth of individual discounts is reduced. This balance between volume and discount depth likely reflects an optimized strategy for attracting steady consumer interest without significant margin reductions.
 ```{r}
 #| echo: false
 #| eval: true
@@ -206,10 +207,9 @@ ggplot(avg_discount_by_month, aes(x = month, y = avg_discount)) +
      ) +
      theme_minimal()
 ```
-@fig-average-monthly-discount provides insight into how average discount rates vary across months. The chart reveals that the highest average discounts occur in early spring (February and March) and gradually decrease throughout the year, stabilizing at a lower average discount from July onward. This trend may reflect early-year inventory clearing, where Loblaws offers more substantial discounts to move products after the holiday season. The stabilization of discounts in the latter half of the year, despite an increase in sale frequency, suggests that while more items are on sale, the depth of individual discounts is reduced. This balance between volume and discount depth likely reflects an optimized strategy for attracting steady consumer interest without significant margin reductions.
+
 
 ## Density of Discount Percentages by Season
-
 @fig-discount-density-season illustrates that winter tends to have smaller, consistent discounts, while fall shows a broader spread, including more substantial discounts. Spring and summer exhibit moderate discount distributions. This seasonal comparison underscores the strategic use of varied discount levels by Loblaws, with deeper discounts appearing more frequently in fall and winter, possibly to drive purchases during key shopping periods.
 ```{r}
 #| echo: false
