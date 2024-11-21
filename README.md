@@ -8,8 +8,8 @@ This repo documents the steps and processes used in creating the paper "Loblaws 
 
 The repo is structured as:
 
--   `data/analysis_data` contains the cleaned dataset that was obtained from Project Hammer and pre-processed using SQL on DBBrowser.
--   `other` contains llm usage.
+-   `data/02-analysis_data` contains the cleaned dataset that was obtained from Project Hammer and pre-processed using SQL on DBBrowser.
+-   `other/llm-usage` contains llm usage.
 -   `paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
 -   `scripts` contains the R scripts used to simulate, download and clean data.
 
